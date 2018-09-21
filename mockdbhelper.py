@@ -14,6 +14,7 @@ MOCK_USERS = [{
 
 
 class MockDBHelper:
+
     def get_user(self, email):
         user = [x for x in MOCK_USERS if x.get('email') == email]
         if user:
@@ -27,10 +28,14 @@ class MockDBHelper:
             'hashed': hashed
         })
 
+
+    def get_tables(self, owner_id):
+        return MOCK_TABLES
+
     
     def add_table(self, number, owner):
         MOCK_TABLES.append({
-            'id': number,
+            '_id': str(number),
             'number': number,
             'owner': owner
         })
@@ -41,4 +46,10 @@ class MockDBHelper:
         for table in MOCK_TABLES:
             if table.get('_id') == _id:
                 table['url'] = url
+                break
+
+    def delete_table(self, table_id):
+        for i, table in enumerate(MOCK_TABLES):
+            if table.get('_id') == table_id:
+                del MOCK_TABLES[i]
                 break
