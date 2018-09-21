@@ -1,3 +1,11 @@
+MOCK_TABLES = [{
+    '_id': '1',
+    'number': '1',
+    'owner': 'test@example.com',
+    'url': 'mockurl'
+}]
+
+
 MOCK_USERS = [{
     'email': 'test@example.com',
     'salt': '8Fb23mMNHD5Zb8pr2qWA3PE9bH0=',
@@ -18,3 +26,19 @@ class MockDBHelper:
             'salt': salt,
             'hashed': hashed
         })
+
+    
+    def add_table(self, number, owner):
+        MOCK_TABLES.append({
+            'id': number,
+            'number': number,
+            'owner': owner
+        })
+        return number
+
+
+    def update_table(self, _id, url):
+        for table in MOCK_TABLES:
+            if table.get('_id') == _id:
+                table['url'] = url
+                break

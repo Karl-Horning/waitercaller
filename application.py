@@ -1,5 +1,5 @@
 from flask import Flask, redirect, render_template, request, url_for
-from flask_login import LoginManager, login_required, login_user, logout_user
+from flask_login import LoginManager, current_user, login_required, login_user, logout_user
 
 from config import Config
 from mockdbhelper import MockDBHelper as DBHelper
@@ -70,6 +70,16 @@ def dashboard():
 @login_required
 def account():
     return render_template('account.html')
+
+
+@app.route('/account/createtable', methods=['POST'])
+@login_required
+def account_createtable():
+    tablename = request.form.get('tablenumber')
+    tableid = DB.add_table(tablename, current_user.get_id())
+    new_url = Config.BASE_URL + 'newrequest/' + tableid
+    DB.update_table(tableid, new_url)
+    return redirect(url_for('account'))
 
 
 if __name__ == '__main__':
