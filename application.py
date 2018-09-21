@@ -26,12 +26,6 @@ def index():
     return render_template('index.html')
 
 
-@app.route('/account')
-@login_required
-def account():
-    return 'You are logged in!'
-
-
 @app.route('/register', methods=['POST'])
 def register():
     email = request.form.get('email')
@@ -64,6 +58,18 @@ def login():
 def logout():
     logout_user()
     return redirect(url_for('index'))
+
+
+@app.route('/dashboard')
+@login_required
+def dashboard():
+    return render_template('dashboard.html')
+
+
+@app.route('/account')
+@login_required
+def account():
+    return render_template('account.html')
 
 
 if __name__ == '__main__':
