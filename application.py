@@ -49,7 +49,8 @@ def login():
     password = request.form.get('password')
     stored_user = DB.get_user(email)
 
-    if stored_user and PH.validate_password(password, stored_user['salt'], stored_user['hashed']):
+    if stored_user and PH.validate_password(
+            password, stored_user['salt'], stored_user['hashed']):
         user = User(email)
         login_user(user, remember=True)
         return redirect(url_for('account'))
@@ -102,6 +103,7 @@ def account_deletetable():
 def new_request(tid):
     DB.add_request(tid, datetime.datetime.now())
     return 'Your request has been logged and a waiter will be with you shortly'
+
 
 if __name__ == '__main__':
     app.run(port=5000, debug=True)
