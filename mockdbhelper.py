@@ -18,7 +18,7 @@ MOCK_TABLES = [{
 MOCK_REQUESTS = [{
     '_id': '1',
     'table_number': '1',
-    'table_id': '1'
+    'table_id': '1',
     'time': datetime.datetime.now()
 }]
 
@@ -73,5 +73,5 @@ class MockDBHelper:
     def delete_requests(self, request_id):
         for i, request in enumerate(MOCK_REQUESTS):
             if request.get('_id') == request_id:
-                del MOCK_REQUESTS(i)
+                del MOCK_REQUESTS[i]
                 break
