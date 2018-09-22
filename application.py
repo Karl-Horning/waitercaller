@@ -6,6 +6,8 @@ from mockdbhelper import MockDBHelper as DBHelper
 from models import User
 from passwordhelper import PasswordHelper
 
+import datetime
+
 app = Flask(__name__)
 app.secret_key = Config.SECRET_KEY
 login_manager = LoginManager(app)
@@ -90,6 +92,11 @@ def account_deletetable():
     DB.delete_table(tableid)
     return redirect(url_for('account'))
 
+
+@app.route('/newrequest/<tid>')
+def new_request(tid):
+    DB.add_request(tid, datetime.datetime.now())
+    return 'Your request has been logged and a waiter will be with you shortly'
 
 if __name__ == '__main__':
     app.run(port=5000, debug=True)
