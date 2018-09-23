@@ -42,6 +42,12 @@ class MockDBHelper:
     def get_tables(self, owner_id):
         return MOCK_TABLES
 
+
+    def get_table(self, table_id):
+        for table in MOCK_TABLES:
+            if table.get('_id') == table_id:
+                return table
+
     
     def add_table(self, number, owner):
         MOCK_TABLES.append({
@@ -64,6 +70,18 @@ class MockDBHelper:
             if table.get('_id') == table_id:
                 del MOCK_TABLES[i]
                 break
+
+
+    def add_request(self, table_id, time):
+        table = self.get_table(table_id)
+        MOCK_REQUESTS.append({
+            '_id': table_id,
+            # 'owner': table['owner'],
+            # 'table_number': table['number'],
+            'table_id': table_id,
+            'time': time
+        })
+        return True
 
 
     def get_requests(self, owner_id):

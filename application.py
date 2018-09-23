@@ -74,6 +74,14 @@ def dashboard():
     return render_template('dashboard.html', requests=requests)
 
 
+@app.route('/dashboard/resolve')
+@login_required
+def dashboard_resolve():
+    request_id = request.args.get('request_id')
+    DB.delete_requests(request_id)
+    return redirect(url_for('dashboard'))
+
+
 @app.route('/account')
 @login_required
 def account():
