@@ -2,6 +2,7 @@ from flask import Flask, redirect, render_template, request, url_for
 from flask_login import LoginManager, current_user, login_required, login_user, logout_user
 
 from config import Config
+from forms import RegistrationForm
 from mockdbhelper import MockDBHelper as DBHelper
 from models import User
 from passwordhelper import PasswordHelper
@@ -25,7 +26,8 @@ def load_user(user_id):
 
 @app.route('/')
 def index():
-    return render_template('index.html')
+    registrationform = RegistrationForm()
+    return render_template('index.html', registrationform=registrationform)
 
 
 @app.route('/register', methods=['POST'])
