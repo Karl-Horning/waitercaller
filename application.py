@@ -2,7 +2,7 @@ from flask import Flask, redirect, render_template, request, url_for
 from flask_login import LoginManager, current_user, login_required, login_user, logout_user
 
 from config import Config
-from forms import LoginForm, RegistrationForm
+from forms import CreateTableForm, LoginForm, RegistrationForm
 from mockdbhelper import MockDBHelper as DBHelper
 from models import User
 from passwordhelper import PasswordHelper
@@ -86,17 +86,19 @@ def dashboard_resolve():
 @login_required
 def account():
     tables = DB.get_tables(current_user.get_id())
-    return render_template('account.html', tables=tables)
+    return render_template('account.html', createtableform=CreateTableForm(), tables=tables)
 
 
 @app.route('/account/createtable', methods=['POST'])
 @login_required
 def account_createtable():
-    tablename = request.form.get('tablenumber')
-    tableid = DB.add_table(tablename, current_user.get_id())
-    new_url = Config.BASE_URL + 'newrequest/' + tableid
-    DB.update_table(tableid, new_url)
-    return redirect(url_for('account'))
+    form = CreateTableForm(request.form)
+    if form.validate():
+        tableid = DB.add_table(form.tablenumber.data, current_user.get_id())
+        new_url = Config.BASE_URL + 'newrequest/' + tableid
+        DB.update_table(tableid, new_url)
+        return redirect(url_for('account'))
+    return render_template('account.html', createtableform=form, tables=DB.get_tables(current_user.get_id()))
 
 
 @app.route('/account/deletetable')
