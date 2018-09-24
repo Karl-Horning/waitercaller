@@ -2,7 +2,7 @@ from flask import Flask, redirect, render_template, request, url_for
 from flask_login import LoginManager, current_user, login_required, login_user, logout_user
 
 from config import Config
-from forms import RegistrationForm
+from forms import LoginForm, RegistrationForm
 from mockdbhelper import MockDBHelper as DBHelper
 from models import User
 from passwordhelper import PasswordHelper
@@ -27,7 +27,7 @@ def load_user(user_id):
 @app.route('/')
 def index():
     registrationform = RegistrationForm()
-    return render_template('index.html', registrationform=registrationform)
+    return render_template('index.html', loginform=LoginForm(), registrationform=RegistrationForm())
 
 
 @app.route('/register', methods=['POST'])
@@ -36,26 +36,25 @@ def register():
     if form.validate():
         if DB.get_user(form.email.data):
             form.email.errors.append('Email address already registered')
-            return render_template('index.html', registrationform=form)
+            return render_template('index.html', loginform=LoginForm(), registrationform=form)
         salt = PH.get_salt()
         hashed = PH.get_hash(form.password2.data + salt)
         DB.add_user(form.email.data, salt, hashed)
-        return render_template('index.html', registrationform=form, onloadmessage='Registration successful. Please log in.')
-    return render_template('index.html', registrationform=form)
+        return render_template('index.html', loginform=LoginForm(), registrationform=form, onloadmessage='Registration successful. Please log in.')
+    return render_template('index.html', loginform=LoginForm(), registrationform=form)
 
 
 @app.route('/login', methods=['POST'])
 def login():
-    email = request.form.get('email')
-    password = request.form.get('password')
-    stored_user = DB.get_user(email)
-
-    if stored_user and PH.validate_password(
-            password, stored_user['salt'], stored_user['hashed']):
-        user = User(email)
-        login_user(user, remember=True)
-        return redirect(url_for('account'))
-    return index()
+    form = LoginForm(request.form)
+    if form.validate():
+        stored_user = DB.get_user(form.loginemail.data)
+        if stored_user and PH.validate_password(form.loginpassword.data, stored_user['salt'], stored_user['hashed']):
+            user = User(form.loginemail.data)
+            login_user(user, remember=True)
+            return redirect(url_for('account'))
+        form.loginemail.errors.append('Email or password invalid')
+    return render_template('index.html', loginform=form, registrationform=RegistrationForm())
 
 
 @app.route('/logout')
